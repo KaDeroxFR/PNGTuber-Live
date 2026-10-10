@@ -1,3 +1,6 @@
+import ctypes
+ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID("KaDerox.PNGTuberLive")
+
 import os
 import time
 import customtkinter as ui
@@ -5,6 +8,8 @@ from Helpers.UIClasses import *
 from Helpers.audio import list_microphones, MicMonitor
 from Helpers.settings import load_settings, save_settings
 from Server.Server import OverlayServer
+import sys
+from pathlib import Path
 
 ui.set_appearance_mode("dark")
 ui.set_default_color_theme("dark-blue")
@@ -13,12 +18,16 @@ DEFAULT_THRESHOLD = 15
 DEFAULT_RELEASE = 250
 DEFAULT_PORT = 8080
 
+def resource_path(name):
+    base = Path(getattr(sys, "_MEIPASS", Path(__file__).parent))
+    return str(base / name)
 
 class App(ui.CTk):
     def __init__(self):
         super().__init__()
         self.title("PNGTuber Live")
         self.geometry("1240x790")
+        self.iconbitmap(resource_path("icon.ico"))
         self.resizable(False, False)
         self.configure(fg_color=BG)
         self.server = OverlayServer()
@@ -52,7 +61,7 @@ class App(ui.CTk):
         self.microphone = ComboBox(audio.body, values=self.mic_names, width=300, command=self.on_mic_changed)
         self.microphone.place(x=115, y=10)
 
-        gate = Group(self, "Noise gate", width=430, height=95)
+        gate = Group(self, "Noise gate", width=430, height=98)
         gate.place(x=14, y=567)
         Label(gate.body, "Input level:").place(x=10, y=8)
         self.meter = LevelMeter(gate.body, width=217, height=10, threshold=DEFAULT_THRESHOLD / 100)
