@@ -1,8 +1,8 @@
-# PNGTuber Studio
+# PNGTuber Live
 
-PNGTuber Studio is an application for streamers that allows for easy stream avatar setup.
+PNGTuber Live is an application for streamers that allows for easy stream avatar setup.
 # Download
-To download PNGTuber Studio, go to [Downloads](https://github.com/KaDeroxFR/PNGTuber-Studio/releases/tag/Release) and download the latest installer.
+To download PNGTuber Live, go to [Downloads](https://github.com/KaDeroxFR/PNGTuber-Live/releases/tag/Release) and download the latest installer.
 # Usage
 After downloading, run the application and configure it however you want.
 ## Saving:

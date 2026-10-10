@@ -17,7 +17,7 @@ DEFAULT_PORT = 8080
 class App(ui.CTk):
     def __init__(self):
         super().__init__()
-        self.title("PNGTuber Studio")
+        self.title("PNGTuber Live")
         self.geometry("1240x790")
         self.resizable(False, False)
         self.configure(fg_color=BG)
