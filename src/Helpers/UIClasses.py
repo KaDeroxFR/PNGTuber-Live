@@ -11,7 +11,7 @@ BG = "#202020"
 FIELD = "#2b2b2b"
 FIELD_HOVER = "#3a3a3a"
 BORDER = "#5b5a5c"
-ACCENT = "#d9a0e8"
+ACCENT = "#2370FF"
 MUTED = "#8a8a8a"
 
 
