@@ -1,0 +1,75 @@
+name: Build installer
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release tag"
+        required: true
+        default: "Release"
+      version:
+        description: "Installer version"
+        required: true
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyinstaller customtkinter aiohttp numpy sounddevice pillow
+
+      - name: Build exe with PyInstaller
+        working-directory: src
+        run: >
+          python -m PyInstaller --onefile --noconsole
+          --name PNGTuberLive
+          --icon icon.ico
+          --collect-all customtkinter
+          --add-data "Server/overlay.html;Server"
+          --add-data "icon.ico;."
+          Window.py
+
+      - name: Copy exe to installer folder
+        run: Copy-Item src/dist/PNGTuberLive.exe installer/
+
+      - name: Install NSIS
+        run: choco install nsis -y --no-progress
+
+      - name: Resolve version
+        id: ver
+        run: |
+          $v = "${{ github.event.inputs.version }}"
+          if (-not $v) { $v = "${{ github.event.inputs.tag || github.ref_name }}" }
+          $v = $v.TrimStart("v", "V")
+          if ($v -notmatch '^\d+\.\d+\.\d+$') { $v = "1.0.0" }
+          "version=$v" >> $env:GITHUB_OUTPUT
+          Write-Host "Installer version: $v"
+
+      - name: Compile NSIS script
+        working-directory: installer
+        run: |
+          & "C:\Program Files (x86)\NSIS\makensis.exe" "/DAPP_VERSION=${{ steps.ver.outputs.version }}" installer.nsi
+          if ($LASTEXITCODE -ne 0) { throw "makensis failed" }
+
+      - name: Upload setup to release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.event.inputs.tag || github.ref_name }}
+          files: installer/PNGTuberLive-Setup.exe
